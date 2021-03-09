@@ -32,9 +32,9 @@ namespace digraph {
 
         [[nodiscard]] int VerticesNum() const;
 
-        std::vector<std::vector<Edge>> &AdjList();
+        const std::vector<std::vector<Edge>> &AdjList() const;
 
-        std::vector<int> &InEdgesNum();
+        const std::vector<int> &InEdgesNum() const;
     };
 }
 #endif //OPTYMALIZACJA_DIGRAPH_H

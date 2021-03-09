@@ -39,7 +39,7 @@ namespace graph {
 
         [[nodiscard]] int VerticesNum() const;
 
-        std::vector<std::vector<std::shared_ptr<Edge>>> &AdjList();
+        const std::vector<std::vector<std::shared_ptr<Edge>>> &AdjList() const;
     };
 }
 namespace std {

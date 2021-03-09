@@ -60,7 +60,7 @@ int Graph::VerticesNum() const {
     return verticesNum_;
 }
 
-std::vector<std::vector<std::shared_ptr<Edge>>> &Graph::AdjList() {
+const std::vector<std::vector<std::shared_ptr<Edge>>> &Graph::AdjList() const {
     return adjList_;
 }
 

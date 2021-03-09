@@ -38,11 +38,11 @@ int Digraph::EdgesNum() const {
     return edgesNum_;
 }
 
-std::vector<std::vector<Edge>> &Digraph::AdjList() {
+const std::vector<std::vector<Edge>> &Digraph::AdjList() const{
     return adjList_;
 }
 
-std::vector<int> &Digraph::InEdgesNum() {
+const std::vector<int> &Digraph::InEdgesNum() const {
     return toEdgesNum_;
 }
 

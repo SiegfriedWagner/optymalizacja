@@ -7,10 +7,10 @@
 #include "Graph.h"
 #include "Digraph.h"
 
-std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(graph::Graph &&graph) {
+std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(const graph::Graph &&graph) {
     return euler_cycle::EulerianCycle(graph);
 }
-std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(graph::Graph &graph) {
+std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(const graph::Graph &graph) {
     using graph::Edge;
     // at leas one edge in graph
     if (graph.EdgesNum() < 1)
@@ -21,7 +21,7 @@ std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(graph::Gra
             return false;
     }
     // create iterators through edges
-    std::vector<std::vector<std::shared_ptr<Edge>>::iterator> adjListIterator;
+    std::vector<std::vector<std::shared_ptr<Edge>>::const_iterator> adjListIterator;
     adjListIterator.resize(graph.VerticesNum());
     for (int i = 0; i < graph.VerticesNum(); i++) {
         adjListIterator[i] = graph.AdjList()[i].begin();
@@ -56,10 +56,10 @@ std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(graph::Gra
         return cycle;
     return false;
 }
-std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(digraph::Digraph &&graph) {
+std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(const digraph::Digraph &&graph) {
     return euler_cycle::EulerianCycle(graph);
 }
-std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(digraph::Digraph &graph) {
+std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(const digraph::Digraph &graph) {
     using digraph::Edge;
     // check if there are at least 1 edge
     if (graph.EdgesNum() < 1) return false;
@@ -67,7 +67,7 @@ std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(digraph::D
     for (int i = 0; i < graph.VerticesNum(); ++i)
         if (std::size(graph.AdjList()[i]) != graph.InEdgesNum()[i])
             return false;
-    std::vector<std::vector<Edge>::iterator> adjListIterator;
+    std::vector<std::vector<Edge>::const_iterator> adjListIterator;
     adjListIterator.resize(graph.VerticesNum());
     // create iterators through edges
     for (int i = 0; i < graph.VerticesNum(); ++i)
