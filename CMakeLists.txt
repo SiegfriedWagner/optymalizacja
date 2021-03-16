@@ -28,16 +28,24 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
         EXCLUDE_FROM_ALL)
 
 # Adds libraries
-add_library(libgraph STATIC src/Digraph.h src/Digraph.cpp src/Graph.h src/Graph.cpp src/IOHelpers.h)
+add_library(libgraph STATIC src/Digraph.h src/Digraph.cpp src/Graph.h src/Graph.cpp src/IOHelpers.h src/std_extensions.h)
+add_library(libgraph_bipariate STATIC src/Bipariate.h src/Bipariate.cpp)
 add_library(libgraph_euler STATIC src/EulerCycle.h src/EulerCycle.cpp)
+add_library(libgraph_matching STATIC src/Matching.h src/Matching.cpp)
 
 # Tests
 add_subdirectory(tests)
 
 # Script executables
 set(ARGPARSE external/argparse/argparse.h)
+# link libs
 target_link_libraries(libgraph_euler libgraph)
-
+target_link_libraries(libgraph_bipariate libgraph)
+target_link_libraries(libgraph_matching libgraph libgraph_bipariate)
 # euler
 add_executable(euler ${ARGPARSE} euler/main.cpp)
 target_link_libraries(euler libgraph libgraph_euler)
+
+# maximum matching
+add_executable(matching ${ARGPARSE} maximum_matching/main.cpp)
+target_link_libraries(matching libgraph libgraph_matching)

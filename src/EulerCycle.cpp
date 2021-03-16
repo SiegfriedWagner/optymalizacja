@@ -12,9 +12,6 @@ std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(const grap
 }
 std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(const graph::Graph &graph) {
     using graph::Edge;
-    // at leas one edge in graph
-    if (graph.EdgesNum() < 1)
-        return false;
     // check if any vertex has odd number of vertices
     for (int i = 0; i < graph.VerticesNum(); ++i) {
         if (std::size(graph.AdjList()[i]) % 2 != 0)
@@ -61,8 +58,6 @@ std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(const digr
 }
 std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(const digraph::Digraph &graph) {
     using digraph::Edge;
-    // check if there are at least 1 edge
-    if (graph.EdgesNum() < 1) return false;
     // check if every vertex have equal number of incoming and outgoing connections
     for (int i = 0; i < graph.VerticesNum(); ++i)
         if (std::size(graph.AdjList()[i]) != graph.InEdgesNum()[i])

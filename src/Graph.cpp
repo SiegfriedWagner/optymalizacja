@@ -7,16 +7,16 @@
 using namespace graph;
 
 bool Edge::operator==(const Edge &other) const {
-    return v == other.v && w == other.w && weight == other.weight;
+    return from == other.from && to == other.to && weight == other.weight;
 }
 
 int Edge::Other(int vertex) const {
-    if (vertex == v)
-        return w;
-    else if (vertex == w)
-        return v;
+    if (vertex == from)
+        return to;
+    else if (vertex == to)
+        return from;
     else
-        throw std::invalid_argument("Vertex id must be either w or v");
+        throw std::invalid_argument("Vertex id must be either to or v");
 }
 
 Graph::Graph() : Graph(0) {}
@@ -44,7 +44,7 @@ void Graph::AddEdge(int f_vertex, int s_vertex, int weight) {
         std::swap(f_vertex, s_vertex);
     // check if edge exists
     for (auto &edge : adjList_[f_vertex])
-        if (edge->w == s_vertex)
+        if (edge->to == s_vertex)
             throw std::invalid_argument("Attempt to add edge for second time was made");
     auto edge = std::make_shared<Edge>(f_vertex, s_vertex, weight);
     adjList_[f_vertex].push_back(edge);

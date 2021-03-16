@@ -8,7 +8,8 @@
 namespace io_helpers {
     template<typename VertexType, typename WeightType>
     std::tuple<bool, int, std::vector<std::tuple<VertexType, VertexType, WeightType>>>
-    ParseFile(std::fstream &inputFile) {
+    ParseFile(std::istream &inputFile) {
+        bool valid = false;
         int vertexNum = 0;
         bool digraph = false;
         std::vector<std::tuple<VertexType, VertexType, WeightType>> vec;
@@ -16,6 +17,7 @@ namespace io_helpers {
         while (inputFile.good()) {
             inputFile >> line;
             if (line == "#DIGRAPH") {
+                valid = true;
                 inputFile >> line;
                 if (line == "true")
                     digraph = true;
@@ -33,6 +35,8 @@ namespace io_helpers {
                 }
             }
         }
+        if(!valid)
+            throw new std::runtime_error("File doesn't contain valid graph description");
         return {digraph, vertexNum, std::move(vec)};
     }
 }

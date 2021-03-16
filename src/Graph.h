@@ -13,14 +13,10 @@
 
 namespace graph {
     struct Edge {
-        // v <= w (always)
-        const int v;
-        const int w;
-        int weight; // TODO: Consider making weight const for sake of hash<Edge> correctness
-        Edge(int f_vertex, int s_vertex, int weight) : v(f_vertex), w(s_vertex), weight(weight) {
-           if (v > w)
-               std::swap((int&) v,(int&) w);
-        }
+        const int from;
+        const int to;
+        const int weight; // TODO: Consider making weight const for sake of hash<Edge> correctness
+        Edge(int f_vertex, int s_vertex, int weight) : from(f_vertex), to(s_vertex), weight(weight) { }
         bool operator==(const Edge &other) const;
         [[nodiscard]] int Other(int vertex) const;
     };
@@ -51,15 +47,15 @@ namespace std {
     template<>
     struct hash<Edge> {
         size_t operator()(const Edge &edge) const {
-            static_assert(std::is_same<decltype(Edge::w), const int>::value,
+            static_assert(std::is_same<decltype(Edge::from), const int>::value,
                           "Edge hash function was created only for int types");
-            static_assert(std::is_same<decltype(Edge::v), const int>::value,
+            static_assert(std::is_same<decltype(Edge::to), const int>::value,
                           "Edge hash function was created only for int types");
-            static_assert(std::is_same<decltype(Edge::weight), int>::value,
+            static_assert(std::is_same<decltype(Edge::weight), const int>::value,
                           "Edge hash function was created only for int types");
             // implementation based on https://stackoverflow.com/questions/17016175/c-unordered-map-using-a-custom-class-type-as-the-key
             // TODO: Test hash function
-            return ((edge.v ^ (edge.w << 1)) >> 1) ^ (edge.weight << 1);
+            return ((edge.from ^ (edge.to << 1)) >> 1) ^ (edge.weight << 1);
         }
     };
 }
