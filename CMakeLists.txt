@@ -29,9 +29,10 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
 
 # Adds libraries
 add_library(libgraph STATIC src/Digraph.h src/Digraph.cpp src/Graph.h src/Graph.cpp src/IOHelpers.h src/std_extensions.h)
-add_library(libgraph_bipariate STATIC src/Bipariate.h src/Bipariate.cpp)
+add_library(libgraph_bipariate STATIC src/Bipartiate.h src/Bipartiate.cpp)
 add_library(libgraph_euler STATIC src/EulerCycle.h src/EulerCycle.cpp)
 add_library(libgraph_matching STATIC src/Matching.h src/Matching.cpp)
+add_library(libgraph_hungarian STATIC src/Hungarian.h src/Hungarian.cpp)
 
 # Tests
 add_subdirectory(tests)
@@ -42,6 +43,7 @@ set(ARGPARSE external/argparse/argparse.h)
 target_link_libraries(libgraph_euler libgraph)
 target_link_libraries(libgraph_bipariate libgraph)
 target_link_libraries(libgraph_matching libgraph libgraph_bipariate)
+target_link_libraries(libgraph_hungarian libgraph libgraph_bipariate libgraph_matching)
 # euler
 add_executable(euler ${ARGPARSE} euler/main.cpp)
 target_link_libraries(euler libgraph libgraph_euler)
@@ -49,3 +51,7 @@ target_link_libraries(euler libgraph libgraph_euler)
 # maximum matching
 add_executable(matching ${ARGPARSE} maximum_matching/main.cpp)
 target_link_libraries(matching libgraph libgraph_matching)
+
+# hungarian
+add_executable(hungarian ${ARGPARSE} hungarian/main.cpp)
+target_link_libraries(hungarian libgraph libgraph_hungarian)

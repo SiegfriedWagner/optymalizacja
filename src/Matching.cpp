@@ -7,7 +7,7 @@
 #include <queue>
 #include "Digraph.h"
 #include "Matching.h"
-#include "Bipariate.h"
+#include "Bipartiate.h"
 #include "std_extensions.h"
 #include <cassert>
 

@@ -24,16 +24,12 @@ namespace digraph {
         std::vector<std::vector<Edge>> adjList_;
         std::vector<int> toEdgesNum_;
     public:
+        Digraph(int vertices_num);
         Digraph(int vertices_num, std::vector<std::tuple<int, int, int>> &edges);
-
         void AddEdge(int from, int to, int weight);
-
         [[nodiscard]] int EdgesNum() const;
-
         [[nodiscard]] int VerticesNum() const;
-
         const std::vector<std::vector<Edge>> &AdjList() const;
-
         const std::vector<int> &InEdgesNum() const;
     };
 }

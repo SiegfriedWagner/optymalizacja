@@ -8,9 +8,11 @@
 #include <stack>
 #include <exception>
 #include <vector>
+#include <string>
 
 using namespace digraph;
 
+Digraph::Digraph(int vertices_num) : verticesNum_(vertices_num), toEdgesNum_(vertices_num), edgesNum_(0), adjList_(vertices_num) {}
 Digraph::Digraph(int vertices_num, std::vector<std::tuple<int, int, int>> &edges) : verticesNum_(vertices_num),
                                                                                     edgesNum_(std::size(edges)),
                                                                                     adjList_(vertices_num),
@@ -28,7 +30,7 @@ void Digraph::AddEdge(int from, int to, int weight) {
     if (from < 0 || from >= verticesNum_)
         throw std::invalid_argument("Invalid 'from' vertex");
     if (to < 0 || to >= verticesNum_)
-        throw std::invalid_argument("Invalid 'to' vertex");
+        throw std::invalid_argument("Invalid 'to' vertex " + std::to_string(to));
     adjList_[from].emplace_back(to, weight);
     toEdgesNum_[to]++;
     edgesNum_++;

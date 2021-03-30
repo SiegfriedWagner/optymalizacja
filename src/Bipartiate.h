@@ -1,8 +1,8 @@
 //
 // Created by Mateusz Chojnowski on 15.03.2021.
 //
-#ifndef OPTYMALIZACJA_BIPARIATE_H
-#define OPTYMALIZACJA_BIPARIATE_H
+#ifndef OPTYMALIZACJA_BIPARTIATE_H
+#define OPTYMALIZACJA_BIPARTIATE_H
 
 #include "Graph.h"
 #include "Digraph.h"
@@ -22,4 +22,4 @@ namespace bipariate {
     std::variant<bool, BipariateInfo> BipariateGraph(digraph::Digraph &graph);
     std::variant<bool, BipariateInfo> BipariateGraph(graph::Graph &graph);
 }
-#endif //OPTYMALIZACJA_BIPARIATE_H
+#endif //OPTYMALIZACJA_BIPARTIATE_H

@@ -2,7 +2,7 @@
 // Created by Mateusz Chojnowski on 15.03.2021.
 //
 
-#include "Bipariate.h"
+#include "Bipartiate.h"
 #include <queue>
 #include <stack>
 using namespace bipariate;
