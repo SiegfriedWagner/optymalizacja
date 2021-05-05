@@ -25,7 +25,7 @@ namespace digraph {
         std::vector<int> toEdgesNum_;
     public:
         Digraph(int vertices_num);
-        Digraph(int vertices_num, std::vector<std::tuple<int, int, int>> &edges);
+        Digraph(int vertices_num, const std::vector<std::tuple<int, int, int>> &edges);
         void AddEdge(int from, int to, int weight);
         [[nodiscard]] int EdgesNum() const;
         [[nodiscard]] int VerticesNum() const;

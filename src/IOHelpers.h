@@ -4,11 +4,18 @@
 
 #ifndef OPT_IOHELPERS_H
 #define OPT_IOHELPERS_H
+#include <forward_list>
 
 namespace io_helpers {
     template<typename VertexType, typename WeightType>
-    std::tuple<bool, int, std::vector<std::tuple<VertexType, VertexType, WeightType>>>
-    ParseFile(std::istream &inputFile) {
+    struct ParsingResult {
+        const bool isDirected;
+        const int verticesNum;
+        const std::vector<std::tuple<VertexType, VertexType, WeightType>> edges;
+    };
+
+    template<typename VertexType, typename WeightType>
+    ParsingResult<VertexType, WeightType> ParseFile(std::istream &inputFile) {
         bool valid = false;
         int vertexNum = 0;
         bool digraph = false;
@@ -40,6 +47,8 @@ namespace io_helpers {
         return {digraph, vertexNum, std::move(vec)};
     }
 }
+
+
 namespace euler_cycle {
     void PrintCycle(std::forward_list<int> &cycle) {
         auto iterator = cycle.begin();

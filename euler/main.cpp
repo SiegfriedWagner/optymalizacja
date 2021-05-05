@@ -19,8 +19,8 @@ int main(int argc, const char* argv[]) {
         std::fstream inputFile;
         inputFile.open(value.c_str(), std::fstream::in);
         auto result = io_helpers::ParseFile<int, int>(inputFile);
-        if (std::get<0>(result)) {
-            digraph::Digraph graph(std::get<1>(result), std::get<2>(result));
+        if (result.isDirected) {
+            digraph::Digraph graph(result.verticesNum, result.edges);
             auto cycle_result = euler_cycle::EulerianCycle(graph);
             if (std::holds_alternative<std::forward_list<int>>(cycle_result))
                 euler_cycle::PrintCycle(std::get<std::forward_list<int>>(cycle_result));
@@ -29,7 +29,7 @@ int main(int argc, const char* argv[]) {
         }
         else
         {
-            graph::Graph undirected_graph(std::get<1>(result), std::get<2>(result));
+            graph::Graph undirected_graph(result.verticesNum, result.edges);
             auto cycle_result = euler_cycle::EulerianCycle(undirected_graph);
             if (std::holds_alternative<std::forward_list<int>>(cycle_result))
                 euler_cycle::PrintCycle(std::get<std::forward_list<int>>(cycle_result));

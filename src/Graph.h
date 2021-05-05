@@ -28,7 +28,7 @@ namespace graph {
     public:
         Graph();
         Graph(int verticesNum);
-        Graph(int verticesNum, std::vector<std::tuple<int, int, int>> &initializer);
+        Graph(int verticesNum, const std::vector<std::tuple<int, int, int>> &initializer);
         Graph(Graph&& moved);
         void AddEdge(int f_vertex, int s_vertex, int weight);
         [[nodiscard]] int EdgesNum() const;

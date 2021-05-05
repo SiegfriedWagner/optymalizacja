@@ -3,7 +3,7 @@ project(optymalizacja)
 set(CMAKE_CXX_STANDARD 20)
 
 # Download and unpack googletest at configure time
-configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
+configure_file(GoogleTest.txt googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
         RESULT_VARIABLE result
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/googletest-download )
@@ -28,11 +28,12 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
         EXCLUDE_FROM_ALL)
 
 # Adds libraries
-add_library(libgraph STATIC src/Digraph.h src/Digraph.cpp src/Graph.h src/Graph.cpp src/IOHelpers.h src/std_extensions.h)
+add_library(libgraph STATIC src/Digraph.h src/Digraph.cpp src/Graph.h src/Graph.cpp src/IOHelpers.h src/std_extensions.h src/MatrixGraph.h src/MatrixGraph.cpp)
 add_library(libgraph_bipariate STATIC src/Bipartiate.h src/Bipartiate.cpp)
 add_library(libgraph_euler STATIC src/EulerCycle.h src/EulerCycle.cpp)
 add_library(libgraph_matching STATIC src/Matching.h src/Matching.cpp)
 add_library(libgraph_hungarian STATIC src/Hungarian.h src/Hungarian.cpp)
+add_library(libgraph_converters STATIC src/GraphConverters.h)
 
 # Tests
 add_subdirectory(tests)
@@ -44,6 +45,8 @@ target_link_libraries(libgraph_euler libgraph)
 target_link_libraries(libgraph_bipariate libgraph)
 target_link_libraries(libgraph_matching libgraph libgraph_bipariate)
 target_link_libraries(libgraph_hungarian libgraph libgraph_bipariate libgraph_matching)
+target_link_libraries(libgraph_converters libgraph)
+
 # euler
 add_executable(euler ${ARGPARSE} euler/main.cpp)
 target_link_libraries(euler libgraph libgraph_euler)
@@ -55,3 +58,7 @@ target_link_libraries(matching libgraph libgraph_matching)
 # hungarian
 add_executable(hungarian ${ARGPARSE} hungarian/main.cpp)
 target_link_libraries(hungarian libgraph libgraph_hungarian)
+
+# TSP_MST
+add_executable(TSP_branchAndBound ${ARGPARSE} ../src/TSP.h TSP_MST/main.cpp)
+target_link_libraries(TSP_branchAndBound libgraph)

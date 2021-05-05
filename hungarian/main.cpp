@@ -43,7 +43,7 @@ int main(const int argc, const char **argv) {
                 std::fstream inputFile;
                 inputFile.open(value.c_str(), std::fstream::in);
                 auto result = io_helpers::ParseFile<int, int>(inputFile);
-                digraph::Digraph graph(std::get<1>(result), std::get<2>(result));
+                digraph::Digraph graph(result.verticesNum, result.edges);
                 auto matrching_result = matching::HungarianMatch(graph);
                 if(!std::holds_alternative<bool>(matrching_result)) {
                     std::cout << "Found matching" << std::endl;

@@ -26,7 +26,7 @@ Graph::Graph(int verticesNum) : verticesNum_(verticesNum), edgesNum_(0), adjList
 
 Graph::Graph(Graph &&moved) : verticesNum_(moved.verticesNum_), edgesNum_(moved.edgesNum_), adjList_(std::move(moved.adjList_)) {}
 
-Graph::Graph(int verticesNum, std::vector<std::tuple<int, int, int>> &initializer) : Graph(verticesNum) {
+Graph::Graph(int verticesNum, const std::vector<std::tuple<int, int, int>> &initializer) : Graph(verticesNum) {
     for (auto &element : initializer) {
         AddEdge(std::get<0>(element), std::get<1>(element), std::get<2>(element));
     }

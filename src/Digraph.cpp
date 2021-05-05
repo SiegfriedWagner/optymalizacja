@@ -13,7 +13,7 @@
 using namespace digraph;
 
 Digraph::Digraph(int vertices_num) : verticesNum_(vertices_num), toEdgesNum_(vertices_num), edgesNum_(0), adjList_(vertices_num) {}
-Digraph::Digraph(int vertices_num, std::vector<std::tuple<int, int, int>> &edges) : verticesNum_(vertices_num),
+Digraph::Digraph(int vertices_num, const std::vector<std::tuple<int, int, int>> &edges) : verticesNum_(vertices_num),
                                                                                     edgesNum_(std::size(edges)),
                                                                                     adjList_(vertices_num),
                                                                                     toEdgesNum_(vertices_num) {
