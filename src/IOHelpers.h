@@ -5,13 +5,16 @@
 #ifndef OPT_IOHELPERS_H
 #define OPT_IOHELPERS_H
 #include <forward_list>
+#include <iostream>
+#include <fstream>
+#include "Graph.h"
 
 namespace io_helpers {
     template<typename VertexType, typename WeightType>
     struct ParsingResult {
         const bool isDirected;
         const int verticesNum;
-        const std::vector<std::tuple<VertexType, VertexType, WeightType>> edges;
+        std::vector<std::tuple<VertexType, VertexType, WeightType>> edges;
     };
 
     template<typename VertexType, typename WeightType>
@@ -46,6 +49,16 @@ namespace io_helpers {
             throw new std::runtime_error("File doesn't contain valid graph description");
         return {digraph, vertexNum, std::move(vec)};
     }
+
+    void PrintGraph(graph::Graph &graph){
+        std::cout << "VerticesNum: " << graph.VerticesNum() << std::endl;
+        for (int vertex = 0; vertex < graph.VerticesNum(); ++vertex) {
+            for(auto &edge : graph.AdjList()[vertex])
+                if (edge->from == vertex)
+                    std::cout << edge->from + 1 << " " << edge->to + 1 << " " << edge->weight << std::endl;
+        }
+    }
+
 }
 
 

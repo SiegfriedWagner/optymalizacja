@@ -3,6 +3,7 @@
 //
 
 #include "Graph.h"
+#include <cassert>
 
 using namespace graph;
 
@@ -24,7 +25,7 @@ Graph::Graph() : Graph(0) {}
 Graph::Graph(int verticesNum) : verticesNum_(verticesNum), edgesNum_(0), adjList_(verticesNum,
                                                                                   std::vector<std::shared_ptr<Edge>>()) {}
 
-Graph::Graph(Graph &&moved) : verticesNum_(moved.verticesNum_), edgesNum_(moved.edgesNum_), adjList_(std::move(moved.adjList_)) {}
+Graph::Graph(Graph &&moved) noexcept : verticesNum_(moved.verticesNum_), edgesNum_(moved.edgesNum_), adjList_(std::move(moved.adjList_)) {}
 
 Graph::Graph(int verticesNum, const std::vector<std::tuple<int, int, int>> &initializer) : Graph(verticesNum) {
     for (auto &element : initializer) {
@@ -50,6 +51,21 @@ void Graph::AddEdge(int f_vertex, int s_vertex, int weight) {
     adjList_[f_vertex].push_back(edge);
     adjList_[s_vertex].push_back(edge);
     edgesNum_++;
+}
+
+void Graph::AddEdge(std::shared_ptr<Edge> &edge) {
+    assert(edge->from >= 0 && edge->to < verticesNum_);
+    for (auto &existingEdge : AdjList()[edge->from]) {
+        if(edge.get() == existingEdge.get())
+            throw std::runtime_error("Edge added twice");
+    }
+    for (auto &existingEdge : AdjList()[edge->to]) {
+        if(edge.get() == existingEdge.get())
+            throw std::runtime_error("Edge added twice");
+    }
+    edgesNum_++;
+    adjList_[edge->from].push_back(edge);
+    adjList_[edge->to].push_back(edge);
 }
 
 int Graph::EdgesNum() const {

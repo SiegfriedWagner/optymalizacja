@@ -59,6 +59,8 @@ target_link_libraries(matching libgraph libgraph_matching)
 add_executable(hungarian ${ARGPARSE} hungarian/main.cpp)
 target_link_libraries(hungarian libgraph libgraph_hungarian)
 
-# TSP_MST
-add_executable(TSP_branchAndBound ${ARGPARSE} ../src/TSP.h TSP_MST/main.cpp)
-target_link_libraries(TSP_branchAndBound libgraph)
+# tsp branch and bound
+add_subdirectory(tsp_branch_and_bound)
+
+# tsp mst
+add_subdirectory(tsp_mst)

@@ -9,6 +9,8 @@
 #include "./BinaryTree.h"
 #include <memory>
 #include <cassert>
+#include <ctime>
+#include <cstdlib>
 
 template<typename T>
 void PrintArray(std::vector<std::vector<T>> &arr) {
@@ -152,7 +154,7 @@ namespace tsp {
         return step;
     }
 
-    void BranchAndBoundSolveStep(std::shared_ptr<btree::BTreeNode<SplitStep>> current_step) {
+    void BranchAndBoundSolveStep(std::shared_ptr<btree::BTreeNode<SplitStep>> current_step, bool randomlyPickZeros) {
         using namespace btree;
         std::shared_ptr<BTreeNode<SplitStep>> right_node;
         {
@@ -170,7 +172,7 @@ namespace tsp {
         // select some col/row
         int selectedRow;
         int selectedCol;
-        assert(FindZero(right_node->GetData().array, selectedRow, selectedCol, false));
+        assert(FindZero(right_node->GetData().array, selectedRow, selectedCol, randomlyPickZeros));
         int newSize = right_node->GetData().array.size() - 1;
         std::shared_ptr<BTreeNode<SplitStep>> left_node;
         {
@@ -263,7 +265,7 @@ namespace tsp {
         BTreeNode<SplitStep>::SetLeft(current_step, left_node);
     }
 
-    void BranchAndBoundSolve(graph::MatrixGraph &matrixGraph) {
+    void BranchAndBoundSolve(graph::MatrixGraph &matrixGraph, bool randomlyPickZeros) {
         using namespace btree;
         assert(matrixGraph.Matrix().size() == matrixGraph.Matrix()[0].size());
         // init btree root node
@@ -287,7 +289,7 @@ namespace tsp {
             int step = 0;
             while (AnyEdgesLeft(current_node)) {
                 std::cout << std::endl << "Step: " << step << std::endl;
-                BranchAndBoundSolveStep(current_node);
+                BranchAndBoundSolveStep(current_node, randomlyPickZeros);
                 PropagateCost(current_node);
                 std::cout << "Root" << std::endl;
                 current_node->GetData().print();
@@ -299,21 +301,6 @@ namespace tsp {
                     current_node->GetLeft()->GetData().print();
                 current_node = DescentLowestCost(root_node, step);
             }
-//            for (int i = 0; i < 6; ++i) {
-//                std::cout << std::endl << "Step: " << i << std::endl;
-//                BranchAndBoundSolveStep(current_node);
-//                PropagateCost(current_node);
-//                std::cout << "Root" << std::endl;
-//                current_node->GetData().print();
-//                std::cout << "Right" << std::endl;
-//                if(current_node->GetRight() != nullptr)
-//                    current_node->GetRight()->GetData().print();
-//                std::cout << "Left" << std::endl;
-//                if(current_node->GetLeft() != nullptr)
-//                    current_node->GetLeft()->GetData().print();
-//
-//                current_node = current_node->GetLeft();
-//            }
         }
         // check path
         std::shared_ptr<BTreeNode<SplitStep>> current_node = root_node;

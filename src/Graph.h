@@ -27,10 +27,11 @@ namespace graph {
         std::vector<std::vector<std::shared_ptr<Edge>>> adjList_;
     public:
         Graph();
-        Graph(int verticesNum);
+        explicit Graph(int verticesNum);
         Graph(int verticesNum, const std::vector<std::tuple<int, int, int>> &initializer);
-        Graph(Graph&& moved);
+        Graph(Graph&& moved) noexcept ;
         void AddEdge(int f_vertex, int s_vertex, int weight);
+        void AddEdge(std::shared_ptr<Edge> &edge);
         [[nodiscard]] int EdgesNum() const;
 
         [[nodiscard]] int VerticesNum() const;
