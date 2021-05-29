@@ -10,7 +10,7 @@
 namespace graph {
     class MatrixGraph {
     private:
-        int verticesNum_;
+        size_t verticesNum_;
         std::vector<std::vector<int>> matrix_;
     public:
         static const int noEdgeValue = -1;
@@ -18,7 +18,10 @@ namespace graph {
         MatrixGraph(int verticesNum, const std::vector<std::tuple<int, int, int>> initializer);
         MatrixGraph(int verticesNum);
         std::vector<std::vector<int>>& Matrix();
+        [[nodiscard]] const std::vector<std::vector<int>>& Matrix() const;
         void AddEdge(int from, int to, int weight);
+        [[nodiscard]] size_t VerticesNum() const;
+        [[nodiscard]] int Weight(int from, int to) const;
     };
 }
 #endif //OPTYMALIZACJA_MATRIXGRAPH_H

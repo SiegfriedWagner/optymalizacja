@@ -18,7 +18,7 @@ std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(const grap
             return false;
     }
     // create iterators through edges
-    std::vector<std::vector<std::shared_ptr<Edge>>::const_iterator> adjListIterator;
+    std::vector<std::unordered_set<std::shared_ptr<Edge>>::const_iterator> adjListIterator;
     adjListIterator.resize(graph.VerticesNum());
     for (int i = 0; i < graph.VerticesNum(); i++) {
         adjListIterator[i] = graph.AdjList()[i].begin();

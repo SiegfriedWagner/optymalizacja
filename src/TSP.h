@@ -11,6 +11,7 @@
 #include <cassert>
 #include <ctime>
 #include <cstdlib>
+#include <stack>
 
 template<typename T>
 void PrintArray(std::vector<std::vector<T>> &arr) {
@@ -33,20 +34,22 @@ void PrintArray(std::vector<T> &arr) {
 struct SplitStep {
     int cost;
     std::vector<std::vector<int>> array;
-    std::tuple<int, int> visited;
+    // std::tuple<int, int> visited;
     std::vector<int> rows_left;
     std::vector<int> cols_left;
+    graph::Graph path;
 
     void print() {
         // for debugging only
         std::cout << "Cost: " << cost << std::endl;
         std::cout << "Array: " << std::endl;
         PrintArray(array);
-        std::cout << "Visited: (" << std::get<0>(visited) << ", " << std::get<1>(visited) << ")" << std::endl;
         std::cout << "Rows left: ";
         PrintArray(rows_left);
         std::cout << "Cols left: ";
         PrintArray(cols_left);
+        std::cout << "Path: " << std::endl;
+        io_helpers::PrintGraph(path);
     }
 };
 
@@ -91,17 +94,44 @@ namespace tsp {
         return subtractedTotal;
     }
 
-    bool FindZero(intmat &arr, int &row, int &col, bool randomPick) {
+    bool CreatesAccidentalHamiltonianCycle(int from, int to, const graph::Graph &path) {
+        if (path.EdgesNum() == 0 || path.EdgesNum() == path.VerticesNum() - 1)
+            return false;
+        int prev = -1;
+        int comingFrom = from;
+        while (comingFrom != -1) {
+            int newComingFrom = -1;
+            for (auto &edge : path.AdjList()[comingFrom]) {
+                int other = edge->Other(comingFrom);
+                if (other != prev) {
+                    prev = comingFrom;
+                    newComingFrom = other;
+                    if (other == to)
+                        return true;
+                    break;
+                }
+            }
+            comingFrom = newComingFrom;
+        }
+        return false;
+    }
+
+    bool FindZero(intmat &arr, int &row, int &col, bool randomPick, const SplitStep &splitStep) {
+        if (splitStep.path.EdgesNum() == 4)
+            std::cout << "4 found" << std::endl;
         if (randomPick) {
             int tempRow = -1;
             int tempCol = -1;
             for (row = 0; row < arr.size(); ++row)
                 for (col = 0; col < arr[0].size(); ++col) {
                     if (arr[row][col] == 0) {
-                        tempRow = row;
-                        tempCol = col;
-                        if (rand() % 100 > 50)
-                            return true;
+                        if (!CreatesAccidentalHamiltonianCycle(splitStep.rows_left[row], splitStep.cols_left[col],
+                                                               splitStep.path)) {
+                            tempRow = row;
+                            tempCol = col;
+                            if (rand() % 100 > 50)
+                                return true;
+                        }
                     }
                 }
             row = tempRow;
@@ -110,7 +140,9 @@ namespace tsp {
         } else {
             for (row = 0; row < arr.size(); ++row)
                 for (col = 0; col < arr[0].size(); ++col)
-                    if (arr[row][col] == 0)
+                    if (arr[row][col] == 0 &&
+                        !CreatesAccidentalHamiltonianCycle(splitStep.rows_left[row], splitStep.cols_left[col],
+                                                           splitStep.path))
                         return true;
         }
         return false;
@@ -136,7 +168,7 @@ namespace tsp {
     bool AnyEdgesLeft(std::shared_ptr<btree::BTreeNode<SplitStep>> step) {
         assert(step != nullptr);
         assert(step->GetData().rows_left.size() == step->GetData().cols_left.size());
-        return step->GetData().rows_left.size() != 0;
+        return !step->GetData().rows_left.empty();
     }
 
     std::shared_ptr<btree::BTreeNode<SplitStep>>
@@ -154,16 +186,17 @@ namespace tsp {
         return step;
     }
 
-    void BranchAndBoundSolveStep(std::shared_ptr<btree::BTreeNode<SplitStep>> current_step, bool randomlyPickZeros) {
+    void BranchAndBoundSolveStep(const graph::MatrixGraph &orginalGraph, std::shared_ptr<btree::BTreeNode<SplitStep>> current_step, bool randomlyPickZeros) {
         using namespace btree;
+        assert(!current_step->GetData().array.empty());
         std::shared_ptr<BTreeNode<SplitStep>> right_node;
         {
             SplitStep right = {
                     .cost = current_step->GetData().cost,
                     .array = current_step->GetData().array,
-                    .visited = std::make_tuple(-1, -1),
                     .rows_left = current_step->GetData().rows_left,
-                    .cols_left = current_step->GetData().cols_left};
+                    .cols_left = current_step->GetData().cols_left,
+                    .path = current_step->GetData().path};
             right_node = std::make_shared<BTreeNode<SplitStep>>(std::move(right));
         }
         right_node->GetData().cost += MakeZeros(right_node->GetData().array);
@@ -172,8 +205,18 @@ namespace tsp {
         // select some col/row
         int selectedRow;
         int selectedCol;
-        assert(FindZero(right_node->GetData().array, selectedRow, selectedCol, randomlyPickZeros));
-        int newSize = right_node->GetData().array.size() - 1;
+        {
+            bool findZeroResult = FindZero(right_node->GetData().array, selectedRow, selectedCol, randomlyPickZeros,
+                                           *right_node);
+            if (!findZeroResult) {
+                current_step->GetData().array.clear();
+                current_step->GetData().cols_left.clear();
+                current_step->GetData().rows_left.clear();
+                current_step->GetData().cost = INT_MAX;
+                return;
+            }
+        }
+        size_t newSize = right_node->GetData().array.size() - 1;
         std::shared_ptr<BTreeNode<SplitStep>> left_node;
         {
             assert(selectedRow < current_step->GetData().rows_left.size() && selectedCol >= 0);
@@ -181,11 +224,19 @@ namespace tsp {
             SplitStep left = {
                     .cost = right_node->GetData().cost,
                     .array = intmat(newSize, std::vector<int>(newSize)),
-                    .visited =  std::make_tuple(current_step->GetData().rows_left[selectedRow],
-                                                current_step->GetData().cols_left[selectedCol]),
                     .rows_left = std::vector<int>(newSize),
-                    .cols_left = std::vector<int>(newSize)
+                    .cols_left = std::vector<int>(newSize),
+                    .path = right_node->GetData().path
             };
+            for (auto &edge : left.path.AdjList()[current_step->GetData().rows_left[selectedRow]])
+                if (edge->Other(current_step->GetData().rows_left[selectedRow]) ==
+                    current_step->GetData().cols_left[selectedCol])
+                    throw "error";
+            {
+                size_t r = current_step->GetData().rows_left[selectedRow];
+                size_t c = current_step->GetData().cols_left[selectedCol];
+                left.path.AddEdge(c, r, orginalGraph.Weight(r, c));
+            }
             {
                 int row = 0;
                 for (int i = 0; i < right_node->GetData().rows_left.size(); ++i)
@@ -208,8 +259,8 @@ namespace tsp {
                     if (col == selectedCol)
                         continue;
                     left.array[newRow][newCol] = right_node->GetData().array[row][col];
-                    if (row == selectedCol && col == selectedRow)
-                        left.array[newRow][newCol] = graph::MatrixGraph::noEdgeValue;
+//                    if (row == selectedCol && col == selectedRow)
+//                        left.array[newRow][newCol] = graph::MatrixGraph::noEdgeValue;
                     newCol++;
                 }
                 newRow++;
@@ -259,13 +310,18 @@ namespace tsp {
             }
         }
         // avoid adding invalid right node where algorithm was unable to find alternative path
-        if (right_node->GetData().cost < current_step->GetData().cost)
+        if (right_node->GetData().cost < current_step->GetData().cost) {
+            right_node->GetData().array.clear();
+            right_node->GetData().cols_left.clear();
+            right_node->GetData().rows_left.clear();
             right_node->GetData().cost = INT_MAX;
+        }
         BTreeNode<SplitStep>::SetRight(current_step, right_node);
         BTreeNode<SplitStep>::SetLeft(current_step, left_node);
+        current_step->GetData().array.clear();
     }
 
-    void BranchAndBoundSolve(graph::MatrixGraph &matrixGraph, bool randomlyPickZeros) {
+    graph::Graph BranchAndBoundSolve(const graph::MatrixGraph &matrixGraph, bool randomlyPickZeros) {
         using namespace btree;
         assert(matrixGraph.Matrix().size() == matrixGraph.Matrix()[0].size());
         // init btree root node
@@ -274,9 +330,9 @@ namespace tsp {
             SplitStep root = {
                     .cost = 0,
                     .array = matrixGraph.Matrix(),
-                    .visited = std::make_tuple(-1, -1),
                     .rows_left = std::vector<int>(matrixGraph.Matrix().size()),
-                    .cols_left = std::vector<int>(matrixGraph.Matrix().size())};
+                    .cols_left = std::vector<int>(matrixGraph.Matrix().size()),
+                    .path = graph::Graph(matrixGraph.VerticesNum())};
             root_node = std::make_shared<BTreeNode<SplitStep>>(std::move(root));
         }
         for (int index = 0; index < root_node->GetData().rows_left.size(); ++index) {
@@ -289,7 +345,7 @@ namespace tsp {
             int step = 0;
             while (AnyEdgesLeft(current_node)) {
                 std::cout << std::endl << "Step: " << step << std::endl;
-                BranchAndBoundSolveStep(current_node, randomlyPickZeros);
+                BranchAndBoundSolveStep(matrixGraph, current_node, randomlyPickZeros);
                 PropagateCost(current_node);
                 std::cout << "Root" << std::endl;
                 current_node->GetData().print();
@@ -302,19 +358,10 @@ namespace tsp {
                 current_node = DescentLowestCost(root_node, step);
             }
         }
+        std::cout << "FOund" << std::endl;
         // check path
         std::shared_ptr<BTreeNode<SplitStep>> current_node = root_node;
-        std::tuple<int, int> invalid = std::make_tuple(-1, -1);
-        int totalCost = 0;
         while (current_node != nullptr) {
-            if (current_node->GetData().visited != invalid) {
-                auto row = std::get<0>(current_node->GetData().visited);
-                auto col = std::get<1>(current_node->GetData().visited);
-                std::cout << "(" << row + 1 << ", " << col + 1 << "): " << root_node->GetData().array[row][col]
-                          << std::endl;
-                totalCost += root_node->GetData().array[row][col];
-            }
-            std::cout << "Total cost: " << totalCost << std::endl;
             auto left_cost = INT_MAX;
             auto righ_cost = INT_MAX;
             if (current_node->GetRight() != nullptr) {
@@ -327,8 +374,11 @@ namespace tsp {
                 if (cost > 0)
                     left_cost = cost;
             }
+            if (left_cost == INT_MAX && righ_cost == INT_MAX)
+                break;
             current_node = left_cost <= righ_cost ? current_node->GetLeft() : current_node->GetRight();
         }
+        return current_node->GetData().path;
     }
 }
 #endif //OPTYMALIZACJA_TSP_H

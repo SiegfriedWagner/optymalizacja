@@ -20,7 +20,8 @@ int main(int argc, char *argv[])
                 inputFile.open(value.c_str(), std::fstream::in);
                 auto result = io_helpers::ParseFile<int, int>(inputFile);
                 graph::MatrixGraph graph(result.isDirected, result.verticesNum, result.edges);
-                tsp::BranchAndBoundSolve(graph, false);
+                auto path = tsp::BranchAndBoundSolve(graph, false);
+                io_helpers::PrintGraph(path);
                 inputFile.close();
             });
     parser.parse_args(argc, argv);

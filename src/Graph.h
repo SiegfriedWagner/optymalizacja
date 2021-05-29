@@ -5,6 +5,7 @@
 #ifndef OPT_GRAPH_H
 #define OPT_GRAPH_H
 #include <vector>
+#include <unordered_set>
 #include <tuple>
 #include <memory>
 #include <algorithm>
@@ -22,21 +23,24 @@ namespace graph {
     };
     class Graph {
     private:
-        int verticesNum_;
-        int edgesNum_;
-        std::vector<std::vector<std::shared_ptr<Edge>>> adjList_;
+        int verticesNum_{};
+        int edgesNum_{};
+        std::vector<std::unordered_set<std::shared_ptr<Edge>>> adjList_;
     public:
         Graph();
         explicit Graph(int verticesNum);
         Graph(int verticesNum, const std::vector<std::tuple<int, int, int>> &initializer);
+        Graph(Graph &graph);
         Graph(Graph&& moved) noexcept ;
         void AddEdge(int f_vertex, int s_vertex, int weight);
         void AddEdge(std::shared_ptr<Edge> &edge);
+        void DisconnectVertex(int vertexIndex);
+        void RemoveEdge(const std::shared_ptr<Edge> &edge);
         [[nodiscard]] int EdgesNum() const;
 
         [[nodiscard]] int VerticesNum() const;
 
-        const std::vector<std::vector<std::shared_ptr<Edge>>> &AdjList() const;
+        [[nodiscard]] const std::vector<std::unordered_set<std::shared_ptr<Edge>>> &AdjList() const;
     };
 }
 namespace std {

@@ -34,6 +34,7 @@ add_library(libgraph_euler STATIC src/EulerCycle.h src/EulerCycle.cpp)
 add_library(libgraph_matching STATIC src/Matching.h src/Matching.cpp)
 add_library(libgraph_hungarian STATIC src/Hungarian.h src/Hungarian.cpp)
 add_library(libgraph_converters STATIC src/GraphConverters.h)
+add_library(libgraph_color STATIC src/GraphColoring.h src/GraphColoring.cpp)
 
 # Tests
 add_subdirectory(tests)
@@ -64,3 +65,6 @@ add_subdirectory(tsp_branch_and_bound)
 
 # tsp mst
 add_subdirectory(tsp_mst)
+
+# graph coloring
+add_subdirectory(graph_coloring)

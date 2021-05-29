@@ -23,7 +23,8 @@ int Edge::Other(int vertex) const {
 Graph::Graph() : Graph(0) {}
 
 Graph::Graph(int verticesNum) : verticesNum_(verticesNum), edgesNum_(0), adjList_(verticesNum,
-                                                                                  std::vector<std::shared_ptr<Edge>>()) {}
+                                                                                  std::unordered_set<std::shared_ptr<Edge>>()) {}
+Graph::Graph(Graph &graph) = default;
 
 Graph::Graph(Graph &&moved) noexcept : verticesNum_(moved.verticesNum_), edgesNum_(moved.edgesNum_), adjList_(std::move(moved.adjList_)) {}
 
@@ -48,8 +49,8 @@ void Graph::AddEdge(int f_vertex, int s_vertex, int weight) {
         if (edge->to == s_vertex)
             throw std::invalid_argument("Attempt to add edge for second time was made");
     auto edge = std::make_shared<Edge>(f_vertex, s_vertex, weight);
-    adjList_[f_vertex].push_back(edge);
-    adjList_[s_vertex].push_back(edge);
+    adjList_[f_vertex].insert(edge);
+    adjList_[s_vertex].insert(edge);
     edgesNum_++;
 }
 
@@ -64,8 +65,22 @@ void Graph::AddEdge(std::shared_ptr<Edge> &edge) {
             throw std::runtime_error("Edge added twice");
     }
     edgesNum_++;
-    adjList_[edge->from].push_back(edge);
-    adjList_[edge->to].push_back(edge);
+    adjList_[edge->from].insert(edge);
+    adjList_[edge->to].insert(edge);
+}
+
+void Graph::DisconnectVertex(int vertexIdx) {
+    for(auto &edge : adjList_[vertexIdx]) {
+        adjList_[edge->Other(vertexIdx)].erase(edge);
+        edgesNum_--;
+    }
+    adjList_[vertexIdx].clear();
+}
+
+void Graph::RemoveEdge(const std::shared_ptr<Edge> &edge) {
+    adjList_[edge->to].erase(edge);
+    adjList_[edge->from].erase(edge);
+    edgesNum_--;
 }
 
 int Graph::EdgesNum() const {
@@ -76,7 +91,8 @@ int Graph::VerticesNum() const {
     return verticesNum_;
 }
 
-const std::vector<std::vector<std::shared_ptr<Edge>>> &Graph::AdjList() const {
+const std::vector<std::unordered_set<std::shared_ptr<Edge>>> &Graph::AdjList() const {
     return adjList_;
 }
+
 

@@ -28,8 +28,21 @@ graph::MatrixGraph::MatrixGraph(const bool directed, const int verticesNum,
 std::vector<std::vector<int>>& graph::MatrixGraph::Matrix() {
     return matrix_;
 }
+
+const std::vector<std::vector<int>>& graph::MatrixGraph::Matrix() const {
+    return matrix_;
+}
+
 void graph::MatrixGraph::AddEdge(int from, int to, int weight) {
     assert(from < verticesNum_);
     assert(to < verticesNum_);
     matrix_[from][to] = weight;
+}
+
+size_t graph::MatrixGraph::VerticesNum() const {
+    return verticesNum_;
+}
+
+int graph::MatrixGraph::Weight(int from, int to) const {
+    return matrix_[from][to];
 }
