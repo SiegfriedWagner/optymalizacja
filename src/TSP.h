@@ -5,8 +5,10 @@
 #ifndef OPTYMALIZACJA_TSP_H
 #define OPTYMALIZACJA_TSP_H
 
-#include "./MatrixGraph.h"
 #include "./BinaryTree.h"
+#include "./MatrixGraph.h"
+#include "./IOHelpers.h"
+#include "Digraph.h"
 #include <memory>
 #include <cassert>
 #include <ctime>
@@ -34,10 +36,9 @@ void PrintArray(std::vector<T> &arr) {
 struct SplitStep {
     int cost;
     std::vector<std::vector<int>> array;
-    // std::tuple<int, int> visited;
     std::vector<int> rows_left;
     std::vector<int> cols_left;
-    graph::Graph path;
+    digraph::Digraph path;
 
     void print() {
         // for debugging only
@@ -86,15 +87,15 @@ namespace tsp {
             }
             if (minValue != 0) {
                 subtractedTotal += minValue;
-                for (int row = 0; row < arr.size(); ++row)
-                    if (arr[row][col] > 0)
-                        arr[row][col] -= minValue;
+                for (auto & row : arr)
+                    if (row[col] > 0)
+                        row[col] -= minValue;
             }
         }
         return subtractedTotal;
     }
 
-    bool CreatesAccidentalHamiltonianCycle(int from, int to, const graph::Graph &path) {
+    bool CreatesAccidentalHamiltonianCycle(int from, int to, const digraph::Digraph &path) {
         if (path.EdgesNum() == 0 || path.EdgesNum() == path.VerticesNum() - 1)
             return false;
         int prev = -1;
@@ -102,7 +103,7 @@ namespace tsp {
         while (comingFrom != -1) {
             int newComingFrom = -1;
             for (auto &edge : path.AdjList()[comingFrom]) {
-                int other = edge->Other(comingFrom);
+                int other = edge.to;
                 if (other != prev) {
                     prev = comingFrom;
                     newComingFrom = other;
@@ -113,6 +114,7 @@ namespace tsp {
             }
             comingFrom = newComingFrom;
         }
+
         return false;
     }
 
@@ -228,10 +230,6 @@ namespace tsp {
                     .cols_left = std::vector<int>(newSize),
                     .path = right_node->GetData().path
             };
-            for (auto &edge : left.path.AdjList()[current_step->GetData().rows_left[selectedRow]])
-                if (edge->Other(current_step->GetData().rows_left[selectedRow]) ==
-                    current_step->GetData().cols_left[selectedCol])
-                    throw "error";
             {
                 size_t r = current_step->GetData().rows_left[selectedRow];
                 size_t c = current_step->GetData().cols_left[selectedCol];
@@ -259,8 +257,6 @@ namespace tsp {
                     if (col == selectedCol)
                         continue;
                     left.array[newRow][newCol] = right_node->GetData().array[row][col];
-//                    if (row == selectedCol && col == selectedRow)
-//                        left.array[newRow][newCol] = graph::MatrixGraph::noEdgeValue;
                     newCol++;
                 }
                 newRow++;
@@ -321,7 +317,7 @@ namespace tsp {
         current_step->GetData().array.clear();
     }
 
-    graph::Graph BranchAndBoundSolve(const graph::MatrixGraph &matrixGraph, bool randomlyPickZeros) {
+    digraph::Digraph BranchAndBoundSolve(const graph::MatrixGraph &matrixGraph, bool randomlyPickZeros) {
         using namespace btree;
         assert(matrixGraph.Matrix().size() == matrixGraph.Matrix()[0].size());
         // init btree root node
@@ -332,7 +328,7 @@ namespace tsp {
                     .array = matrixGraph.Matrix(),
                     .rows_left = std::vector<int>(matrixGraph.Matrix().size()),
                     .cols_left = std::vector<int>(matrixGraph.Matrix().size()),
-                    .path = graph::Graph(matrixGraph.VerticesNum())};
+                    .path = digraph::Digraph(matrixGraph.VerticesNum())};
             root_node = std::make_shared<BTreeNode<SplitStep>>(std::move(root));
         }
         for (int index = 0; index < root_node->GetData().rows_left.size(); ++index) {
@@ -358,7 +354,7 @@ namespace tsp {
                 current_node = DescentLowestCost(root_node, step);
             }
         }
-        std::cout << "FOund" << std::endl;
+        std::cout << "Found" << std::endl;
         // check path
         std::shared_ptr<BTreeNode<SplitStep>> current_node = root_node;
         while (current_node != nullptr) {

@@ -23,14 +23,16 @@ namespace digraph {
         int edgesNum_;
         std::vector<std::vector<Edge>> adjList_;
         std::vector<int> toEdgesNum_;
+        int total_cost_;
     public:
-        Digraph(int vertices_num);
+        explicit Digraph(int vertices_num);
         Digraph(int vertices_num, const std::vector<std::tuple<int, int, int>> &edges);
         void AddEdge(int from, int to, int weight);
         [[nodiscard]] int EdgesNum() const;
         [[nodiscard]] int VerticesNum() const;
-        const std::vector<std::vector<Edge>> &AdjList() const;
-        const std::vector<int> &InEdgesNum() const;
+        [[nodiscard]] const std::vector<std::vector<Edge>> &AdjList() const;
+        [[nodiscard]] const std::vector<int> &InEdgesNum() const;
+        int AllEdgesCost();
     };
 }
 #endif //OPTYMALIZACJA_DIGRAPH_H

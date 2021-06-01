@@ -11,7 +11,3 @@ add_test(NAME test_matching COMMAND test_matching)
 add_executable(test_btree ../src/BinaryTree.h test_btree.cpp)
 target_link_libraries(test_btree gtest gmock)
 add_test(NAME test_btree COMMAND test_btree)
-# test TSP
-add_executable(test_tsp ../src/TSP.h test_tsp.cpp)
-target_link_libraries(test_tsp gtest gmock libgraph)
-add_test(NAME test_tsp COMMAND test_tsp)

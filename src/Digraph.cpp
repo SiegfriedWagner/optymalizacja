@@ -11,12 +11,13 @@
 #include <string>
 
 using namespace digraph;
-
-Digraph::Digraph(int vertices_num) : verticesNum_(vertices_num), toEdgesNum_(vertices_num), edgesNum_(0), adjList_(vertices_num) {}
+const int NotCalculatedTotalCost = INT_MIN;
+Digraph::Digraph(int vertices_num) : verticesNum_(vertices_num), toEdgesNum_(vertices_num), edgesNum_(0), adjList_(vertices_num), total_cost_(NotCalculatedTotalCost) {}
 Digraph::Digraph(int vertices_num, const std::vector<std::tuple<int, int, int>> &edges) : verticesNum_(vertices_num),
                                                                                     edgesNum_(std::size(edges)),
                                                                                     adjList_(vertices_num),
-                                                                                    toEdgesNum_(vertices_num) {
+                                                                                    toEdgesNum_(vertices_num),
+                                                                                    total_cost_(NotCalculatedTotalCost) {
     for (auto &tuple : edges) {
         int from = std::get<0>(tuple);
         int to = std::get<1>(tuple);
@@ -31,6 +32,7 @@ void Digraph::AddEdge(int from, int to, int weight) {
         throw std::invalid_argument("Invalid 'from' vertex");
     if (to < 0 || to >= verticesNum_)
         throw std::invalid_argument("Invalid 'to' vertex " + std::to_string(to));
+    total_cost_ = NotCalculatedTotalCost;
     adjList_[from].emplace_back(to, weight);
     toEdgesNum_[to]++;
     edgesNum_++;
@@ -50,4 +52,15 @@ const std::vector<int> &Digraph::InEdgesNum() const {
 
 int Digraph::VerticesNum() const {
     return verticesNum_;
+}
+
+int Digraph::AllEdgesCost() {
+    if (total_cost_ == NotCalculatedTotalCost)
+    {
+        total_cost_ = 0;
+        for(auto &index : AdjList())
+            for (auto &edge : index)
+                total_cost_ += edge.weight;
+    }
+    return total_cost_;
 }

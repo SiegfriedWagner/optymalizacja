@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include "Graph.h"
+#include "Digraph.h"
 
 namespace io_helpers {
     template<typename VertexType, typename WeightType>
@@ -56,6 +57,14 @@ namespace io_helpers {
             for(auto &edge : graph.AdjList()[vertex])
                 if (edge->from == vertex)
                     std::cout << edge->from + 1 << " " << edge->to + 1 << " " << edge->weight << std::endl;
+        }
+    }
+
+    void PrintGraph(digraph::Digraph &graph) {
+        std::cout << "VerticesNum: " << graph.VerticesNum() << std::endl;
+        for (int vertex = 0; vertex < graph.VerticesNum(); ++vertex) {
+            for(auto &edge : graph.AdjList()[vertex])
+                std::cout << vertex + 1 << " " << edge.to + 1 << " " << edge.weight << std::endl;
         }
     }
 

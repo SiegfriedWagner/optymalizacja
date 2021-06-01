@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
                 graph::MatrixGraph graph(result.isDirected, result.verticesNum, result.edges);
                 auto path = tsp::BranchAndBoundSolve(graph, false);
                 io_helpers::PrintGraph(path);
+                std::cout << "Total cost: " << path.AllEdgesCost() << std::endl;
                 inputFile.close();
             });
     parser.parse_args(argc, argv);
