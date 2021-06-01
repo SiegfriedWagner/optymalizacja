@@ -5,7 +5,7 @@
 #include "GraphColoring.h"
 #include <cassert>
 using namespace std;
-const size_t NOT_COLORED = -1;
+const int NOT_COLORED = -1;
 
 vector<int> ApproximatelyMaximumIndependentSubset(graph::Graph graph, unordered_set<int> considered_nodes) {
     vector<int> maximumSubset;
@@ -22,12 +22,13 @@ vector<int> ApproximatelyMaximumIndependentSubset(graph::Graph graph, unordered_
         }
         assert(minimumVertexIdx != -1);
         {
-            vector<int> toDisconnect(graph.AdjList()[minimumVertexIdx].size());
-            for (auto &edge : graph.AdjList()[minimumVertexIdx])
-                toDisconnect.push_back(edge->Other(minimumVertexIdx));
-            for(auto disconecting : toDisconnect) {
-                graph.DisconnectVertex(disconecting);
-                considered_nodes.erase(disconecting);
+            auto begin = graph.AdjList()[minimumVertexIdx].begin();
+            while (begin != graph.AdjList()[minimumVertexIdx].end())
+            {
+                auto disconnecting = (*begin)->Other(minimumVertexIdx);
+                considered_nodes.erase(disconnecting);
+                graph.DisconnectVertex(disconnecting);
+                begin = graph.AdjList()[minimumVertexIdx].begin();
             }
         }
         assert(graph.AdjList()[minimumVertexIdx].empty());
@@ -39,7 +40,7 @@ vector<int> ApproximatelyMaximumIndependentSubset(graph::Graph graph, unordered_
 
 GraphColoringResult ColorGraph(graph::Graph graph) {
     size_t currentColorNum = 0;
-    vector<size_t> colors(graph.VerticesNum(), NOT_COLORED);
+    vector<int> colors(graph.VerticesNum(), NOT_COLORED);
     size_t processedVertices = 0;
     unordered_set<int> considered_nodes;
     // process lonely (and sad :<) vertices
@@ -63,7 +64,7 @@ GraphColoringResult ColorGraph(graph::Graph graph) {
         currentColorNum++;
     }
     if (processedVertices != graph.VerticesNum()) {
-        for (size_t & color : colors) {
+        for (int & color : colors) {
             if (color == NOT_COLORED)
                 color = currentColorNum;
         }

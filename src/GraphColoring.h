@@ -8,7 +8,7 @@
 #include "Graph.h"
 
 struct GraphColoringResult {
-    std::vector<size_t> colors;
+    std::vector<int> colors;
     size_t numberOfColorsUsed;
 };
 
