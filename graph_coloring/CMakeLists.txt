@@ -1,0 +1,2 @@
+add_executable(graph_coloring main.cpp)
+target_link_libraries(graph_coloring libgraph_color libgraph)

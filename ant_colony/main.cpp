@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
                 if (result.isDirected)
                     throw std::runtime_error("Directed graphs are not supported");
                 graph::Graph<AntEdge> graph(result.verticesNum, result.edges);
-                auto path = solve_with_ant_colony(graph, 500, 0.5f, 0.8f, 0.2f);
+                auto path = solve_with_ant_colony(graph, 1000, 0.4f, 0.8f, 0.01f);
                 io_helpers::PrintGraph(path);
                 std::cout << "Total cost: " << path.AllEdgesCost() << std::endl;
                 inputFile.close();
