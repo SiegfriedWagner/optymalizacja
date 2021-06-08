@@ -7,10 +7,10 @@
 #include "Graph.h"
 #include "Digraph.h"
 
-std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(const graph::Graph &&graph) {
+std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(const graph::Graph<> &&graph) {
     return euler_cycle::EulerianCycle(graph);
 }
-std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(const graph::Graph &graph) {
+std::variant<bool, std::forward_list<int>> euler_cycle::EulerianCycle(const graph::Graph<> &graph) {
     using graph::Edge;
     // check if any vertex has odd number of vertices
     for (int i = 0; i < graph.VerticesNum(); ++i) {

@@ -9,8 +9,8 @@
 #include "Digraph.h"
 #include "Graph.h"
 namespace euler_cycle {
-    std::variant<bool, std::forward_list<int>> EulerianCycle(const graph::Graph &&graph);
-    std::variant<bool, std::forward_list<int>> EulerianCycle(const graph::Graph &graph);
+    std::variant<bool, std::forward_list<int>> EulerianCycle(const graph::Graph<> &&graph);
+    std::variant<bool, std::forward_list<int>> EulerianCycle(const graph::Graph<> &graph);
     std::variant<bool, std::forward_list<int>> EulerianCycle(const digraph::Digraph &&graph);
     std::variant<bool, std::forward_list<int>> EulerianCycle(const digraph::Digraph &graph);
 }

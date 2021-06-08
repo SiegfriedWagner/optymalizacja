@@ -12,5 +12,5 @@ struct GraphColoringResult {
     size_t numberOfColorsUsed;
 };
 
-GraphColoringResult ColorGraph(graph::Graph graph);
+GraphColoringResult ColorGraph(graph::Graph<graph::Edge> graph);
 #endif //OPTYMALIZACJA_GRAPHCOLORING_H

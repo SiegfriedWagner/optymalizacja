@@ -28,7 +28,7 @@ add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
         EXCLUDE_FROM_ALL)
 
 # Adds libraries
-add_library(libgraph STATIC src/Digraph.h src/Digraph.cpp src/Graph.h src/Graph.cpp src/IOHelpers.h src/std_extensions.h src/MatrixGraph.h src/MatrixGraph.cpp)
+add_library(libgraph STATIC src/Digraph.h src/Digraph.cpp src/Graph.h src/IOHelpers.h src/std_extensions.h src/MatrixGraph.h src/MatrixGraph.cpp)
 add_library(libgraph_bipariate STATIC src/Bipartiate.h src/Bipartiate.cpp)
 add_library(libgraph_euler STATIC src/EulerCycle.h src/EulerCycle.cpp)
 add_library(libgraph_matching STATIC src/Matching.h src/Matching.cpp)
@@ -68,3 +68,9 @@ add_subdirectory(tsp_mst)
 
 # graph coloring
 add_subdirectory(graph_coloring)
+
+#backpack
+add_subdirectory(backpack)
+
+# ants
+add_subdirectory(ant_colony)

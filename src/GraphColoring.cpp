@@ -7,7 +7,7 @@
 using namespace std;
 const int NOT_COLORED = -1;
 
-vector<int> ApproximatelyMaximumIndependentSubset(graph::Graph graph, unordered_set<int> considered_nodes) {
+vector<int> ApproximatelyMaximumIndependentSubset(graph::Graph<> graph, unordered_set<int> considered_nodes) {
     vector<int> maximumSubset;
     while(!considered_nodes.empty()) {
         int minimumDegreeFound = INT_MAX;
@@ -38,7 +38,7 @@ vector<int> ApproximatelyMaximumIndependentSubset(graph::Graph graph, unordered_
     return maximumSubset;
 }
 
-GraphColoringResult ColorGraph(graph::Graph graph) {
+GraphColoringResult ColorGraph(graph::Graph<> graph) {
     size_t currentColorNum = 0;
     vector<int> colors(graph.VerticesNum(), NOT_COLORED);
     size_t processedVertices = 0;
@@ -63,13 +63,14 @@ GraphColoringResult ColorGraph(graph::Graph graph) {
         }
         currentColorNum++;
     }
-    if (processedVertices != graph.VerticesNum()) {
-        for (int & color : colors) {
-            if (color == NOT_COLORED)
-                color = currentColorNum;
-        }
-        currentColorNum++;
-    }
+    assert(processedVertices == graph.VerticesNum());
+//    if (processedVertices != graph.VerticesNum()) {
+//        for (int & color : colors) {
+//            if (color == NOT_COLORED)
+//                color = currentColorNum;
+//        }
+//        currentColorNum++;
+//    }
     return {
         .colors = move(colors),
         .numberOfColorsUsed = currentColorNum

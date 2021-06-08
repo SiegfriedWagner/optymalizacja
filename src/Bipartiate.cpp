@@ -78,7 +78,7 @@ std::variant<bool, BipariateInfo> bipariate::BipariateGraph(digraph::Digraph &gr
 }
 
 
-std::variant<bool, BipariateInfo> bipariate::BipariateGraph(graph::Graph &graph) {
+std::variant<bool, BipariateInfo> bipariate::BipariateGraph(graph::Graph<> &graph) {
     BipariateInfo info{0, 0, std::vector<VertexColor>(graph.VerticesNum(), VertexColor::UNCOLORED)};
     // color first vertex
     for (int vertex = 0; vertex < graph.EdgesNum(); ++vertex) {

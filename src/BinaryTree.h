@@ -14,6 +14,7 @@ namespace btree {
         std::shared_ptr<BTreeNode<Data>> right;
         Data data;
     public:
+        BTreeNode();
         explicit BTreeNode(Data data);
         explicit BTreeNode(Data &data);
         BTreeNode(BTreeNode<Data> &&node) noexcept;
@@ -29,7 +30,8 @@ namespace btree {
         [[nodiscard]] bool IsRightChild() const;
         operator Data&() { return data; }
     };
-
+    template<typename Data>
+    BTreeNode<Data>::BTreeNode() : left(nullptr), right(nullptr), data(Data()) {}
     template<typename Data>
     BTreeNode<Data>::BTreeNode(Data data) : left(nullptr), right(nullptr), data(data) {}
 
@@ -63,14 +65,16 @@ namespace btree {
     void BTreeNode<Data>::SetLeft(std::shared_ptr<btree::BTreeNode<Data>> parent,
                                   std::shared_ptr<btree::BTreeNode<Data>> node) {
         parent->left = node;
-        node->parent = parent;
+        if (node != nullptr)
+            node->parent = parent;
     }
 
     template<typename Data>
     void BTreeNode<Data>::SetRight(std::shared_ptr<btree::BTreeNode<Data>> parent,
                                   std::shared_ptr<btree::BTreeNode<Data>> node) {
         parent->right = node;
-        node->parent = parent;
+        if (node != nullptr)
+            node->parent = parent;
     }
 
     template<typename Data>

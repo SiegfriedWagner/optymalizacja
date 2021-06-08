@@ -50,8 +50,8 @@ namespace io_helpers {
             throw new std::runtime_error("File doesn't contain valid graph description");
         return {digraph, vertexNum, std::move(vec)};
     }
-
-    void PrintGraph(graph::Graph &graph){
+    template<typename E=graph::Edge>
+    void PrintGraph(graph::Graph<E> &graph){
         std::cout << "VerticesNum: " << graph.VerticesNum() << std::endl;
         for (int vertex = 0; vertex < graph.VerticesNum(); ++vertex) {
             for(auto &edge : graph.AdjList()[vertex])

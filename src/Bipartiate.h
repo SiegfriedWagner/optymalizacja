@@ -20,6 +20,6 @@ namespace bipariate {
         std::vector<VertexColor> vertexColors;
     };
     std::variant<bool, BipariateInfo> BipariateGraph(digraph::Digraph &graph);
-    std::variant<bool, BipariateInfo> BipariateGraph(graph::Graph &graph);
+    std::variant<bool, BipariateInfo> BipariateGraph(graph::Graph<> &graph);
 }
 #endif //OPTYMALIZACJA_BIPARTIATE_H

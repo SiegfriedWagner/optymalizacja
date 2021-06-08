@@ -10,7 +10,7 @@
 #include <stack>
 
 
-graph::Graph MinimumSpanningTree(graph::Graph &G) {
+graph::Graph<> MinimumSpanningTree(graph::Graph<> &G) {
     graph::Graph mst_result(G.VerticesNum());
     std::unordered_set<int> visited_vertices;
     std::shared_ptr<graph::Edge> invalidEdge = std::make_shared<graph::Edge>(-1, -1, INT_MAX);
@@ -47,7 +47,7 @@ graph::Graph MinimumSpanningTree(graph::Graph &G) {
     return mst_result;
 }
 
-void DFS_with_replacement(graph::Graph &graph, std::forward_list<int> &order_of_visited_vertices) {
+void DFS_with_replacement(graph::Graph<> &graph, std::forward_list<int> &order_of_visited_vertices) {
     std::unordered_set<int> visitedVertices;
     std::stack<int> toVisit;
     std::stack<int> wayBack;
@@ -89,7 +89,7 @@ void DFS_with_replacement(graph::Graph &graph, std::forward_list<int> &order_of_
     order_of_visited_vertices.push_front(first_vertex); // complete cycle
 }
 
-void print_path_with_weights(graph::Graph &graph, std::forward_list<int> &vertiecs) {
+void print_path_with_weights(graph::Graph<> &graph, std::forward_list<int> &vertiecs) {
     int sum_total = 0;
     auto it = vertiecs.begin();
     int from= 0;
