@@ -3,6 +3,7 @@
 //
 
 #include <fstream>
+#include <climits>
 #include "../external/argparse/argparse.h"
 #include "../src/IOHelpers.h"
 #include "../src/MatrixGraph.h"

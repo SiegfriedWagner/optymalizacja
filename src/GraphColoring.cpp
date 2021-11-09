@@ -4,6 +4,7 @@
 
 #include "GraphColoring.h"
 #include <cassert>
+#include <climits>
 using namespace std;
 const int NOT_COLORED = -1;
 

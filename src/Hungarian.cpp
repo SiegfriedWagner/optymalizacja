@@ -3,6 +3,7 @@
 //
 #include <cassert>
 #include <forward_list>
+#include <climits>
 #include "Hungarian.h"
 #include "Bipartiate.h"
 #include "Matching.h"

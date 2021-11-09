@@ -9,6 +9,7 @@
 #include <exception>
 #include <vector>
 #include <string>
+#include <climits>
 
 using namespace digraph;
 const int NotCalculatedTotalCost = INT_MIN;

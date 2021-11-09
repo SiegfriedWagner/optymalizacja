@@ -8,6 +8,7 @@
 #include "../external/argparse/argparse.h"
 #include "../src/std_extensions.h"
 #include <stack>
+#include <climits>
 
 
 graph::Graph<> MinimumSpanningTree(graph::Graph<> &G) {
